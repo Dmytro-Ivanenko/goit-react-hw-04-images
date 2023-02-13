@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ColorRing } from 'react-loader-spinner';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
@@ -22,32 +22,31 @@ const App = () => {
   const [modalImage, setModalImage] = useState(null);
 
   useEffect(() => {
-    if (search === '') {
-      return;
+    if (search) {
+      const fetchImages = async () => {
+        try {
+          setloading(true);
+          const data = await searchImages(search, page);
+
+          if (data.totalHits !== 0) {
+            setImages(images => {
+              return [...images, ...data.hits];
+            });
+
+            setTotalHits(data.totalHits);
+          } else {
+            Notify.warning('No images found, try another request.');
+          }
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setloading(false);
+        }
+      };
+
+      fetchImages();
     }
-    fetchImages();
-  }, [search, page]);
-
-  async function fetchImages() {
-    try {
-      setloading(true);
-      const data = await searchImages(search, page);
-
-      if (data.totalHits !== 0) {
-        setImages(images => {
-          return [...images, ...data.hits];
-        });
-
-        setTotalHits(data.totalHits);
-      } else {
-        Notify.warning('No images found, try another request.');
-      }
-    } catch (error) {
-      setError(error.message);
-    } finally {
-      setloading(false);
-    }
-  }
+  }, [search, page, setloading, setImages, setError, searchImages]);
 
   const handleSearchSubmit = search => {
     setSearch(search);
@@ -63,13 +62,13 @@ const App = () => {
   };
 
   // modal
-  const onClickModal = (largeImage, tags) => {
+  const onClickModal = useCallback((largeImage, tags) => {
     setModalImage({
       largeImage,
       tags,
     });
     setShowModal(true);
-  };
+  }, []);
 
   const onCloseModal = () => {
     setShowModal(false);

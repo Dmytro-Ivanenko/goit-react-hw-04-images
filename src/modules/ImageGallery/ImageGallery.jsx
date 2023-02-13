@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 
 import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
@@ -32,4 +32,4 @@ ImageGallery.propTypes = {
   showModal: PropTypes.func,
 };
 
-export default ImageGallery;
+export default memo(ImageGallery);
