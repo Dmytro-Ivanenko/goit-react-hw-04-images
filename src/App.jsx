@@ -52,7 +52,6 @@ const App = () => {
     setSearch(search);
     setImages([]);
     setPage(1);
-    setTotalHits(0);
   };
 
   const loadMore = () => {
@@ -91,6 +90,7 @@ const App = () => {
           colors={['#ffeb0d', '#3f51b5', '#ffeb0d', '#3f51b5', '#ffeb0d']}
         />
       )}
+
       {Boolean(images.length) && images.length < totalHits && (
         <Button type="button" onClickBtn={loadMore}>
           Load more
